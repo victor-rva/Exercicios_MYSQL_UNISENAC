@@ -37,7 +37,8 @@ salario float not null,
 comissao varchar(2)
 );
 
-insert into vendedor values (209,'José',1800,'C'),
+insert into vendedor values 
+(209,'José',1800,'C'),
 (111,'Carlos',2490,'A'),
 (11,'João',2780,'C'),
 (240,'Antônio',9500,'C'),
@@ -56,7 +57,8 @@ foreign key (idCliente) references cliente(id),
 foreign key (idVendedor) references vendedor(id)
 );
 
-insert into pedido values (121,20,410,209),
+insert into pedido values 
+(121,20,410,209),
 (97,20,720,101),
 (101,15,720,101),
 (137,20,720,720),
@@ -145,6 +147,10 @@ insert into item_pedido values (121,25,10),
 SELECT descricao AS Descrição , unidade AS Unidade, valor AS 'Valor Unitário'
 FROM produto;
 
+-- 2) Listar da tabela CLIENTE o CNPJ, o nome do cliente e seu endereço, obtendo o seguinte
+-- resultado (idem com especificação de parte dos campos): 
+SELECT cnpj AS CNPJ, nome AS "Nome do Cliente", endereco AS "Endereço" from  cliente;
+
 -- 3) Listar todo o conteúdo de vendedor, obtendo o seguinte resultado
 -- (SELECT sem a especificação de campos – coringa *):  
 SELECT * FROM vendedor;
@@ -159,6 +165,10 @@ SELECT idPedido AS 'Número do Pedido' , idProduto AS 'Código do Produto', qtde
 FROM item_pedido 
 WHERE qtde = 35;
 
+-- 5) Quais são os clientes que moram em Niterói
+SELECT nome AS "Nome do Cliente" FROM cliente WHERE cidade = "niteroi";
+
+
 -- 6) . Listar os produtos que tenham unidade igual a ‘M’ e valor unitário 
 -- igual a R$ 1,05 da tabela produto, obtendo o seguinte resultado (operadores lógicos): 
 SELECT * 
@@ -172,7 +182,7 @@ valor FLOAT NOT NULL;
 -- 7. Listar o código e a descrição dos produtos que tenham o 
 -- valor unitário na faixa de R$ 0,32 até R$2,00, obtendo o 
 -- seguinte resultado (operador between):
-SELECT id, descricao , valor
+SELECT id AS "Código do Produto", descricao AS "Descrição", valor
 FROM produto
 WHERE valor BETWEEN 0.32 AND 2.0;
 
@@ -188,10 +198,29 @@ SELECT id, nome
 FROM vendedor
 WHERE nome NOT LIKE 'Jo%';
 
+-- 10. Listar os vendedores que são da faixa de comissão A e B, obtendo o seguinte resultado
+-- (operadores IN e um conjunto de valores): 
+SELECT nome AS "Nome do Vendedor"
+FROM vendedor
+WHERE comissao IN ('A', 'B');
+
 -- 11. Mostrar os clientes que não tenham inscrição estadual, obtendo o seguinte resultado (IS NULL):
 SELECT *
 FROM cliente
 WHERE ie is null;
+
+-- 12. Mostrar em ordem alfabética a lista de vendedores e seus respectivos salários fixos, obtendo o
+-- seguinte resultado (ORDER BY [ASC/DESC]): 
+SELECT salario
+FROM vendedor
+ORDER BY salario DESC;
+
+-- 13.Listar os nomes, cidades e estados de todos os clientes, ordenados por estado e cidade de forma
+-- descendente, obtendo o seguinte resultado (operador ORDER BY com mais de um campo
+-- especificado): 
+SELECT nome, cidade, uf
+FROM cliente
+ORDER BY uf, cidade, nome ASC;
 
 -- 14. Mostrar a descrição e o valor unitário de todos os produtos que tenham 
 -- a unidade ‘KG’, em ordem de valor unitário ascendente, obtendo o seguinte resultado (ORDER BY)
@@ -254,6 +283,10 @@ WHERE idProduto = 78;
 
 SELECT * FROM vendedor order by salario;
 
+-- 20. Quais são as unidades de produtos, diferentes, na tabela produto (cláusula DISTINCT)
+SELECT DISTINCT unidade
+FROM produto;
+
 -- 21) Listar a quantidade de produtos que cada pedido contém.
 SELECT  COUNT(*), idPedido
 FROM item_pedido
@@ -300,6 +333,38 @@ GROUP BY ip.idPedido;
 SELECT * FROM listarPedidos;
 
 
+-- 23.Ver os pedidos de cada cliente, listando nome do cliente e número do pedido (INNER JOIN)
+SELECT c.nome AS nome_cliente, p.id AS numero_pedido
+FROM cliente c 
+INNER JOIN pedido p ON c.id = p.idCliente;
+
+-- 24.. Listar a junção de clientes com pedidos (CROSS JOIN). 
+SELECT c.nome AS nome_cliente, p.id AS numero_pedido
+FROM cliente c
+CROSS JOIN pedido p;
+
+-- 25. . Listar todos os clientes com seus respectivos pedidos. Os clientes que não têm pedidos também
+-- devem ser apresentados (OUTER JOIN)
+SELECT c.nome AS nome_cliente, p.id AS numero_pedido
+FROM cliente c
+LEFT OUTER JOIN pedido p ON c.id = p.idCliente;
+
+-- 26. Clientes com prazo de entrega superior a 15 dias e que pertençam aos estados de São Paulo ou Rio
+-- de Janeiro (INNER JOIN com WHERE)
+SELECT c.nome AS nome_cliente, p.prazo
+FROM cliente c
+INNER JOIN pedido p ON c.id = p.idCliente
+WHERE p.prazo > 15
+  AND c.uf IN ('SP', 'RJ');
+  
+-- 33. Quais os clientes da cidade Rio de Janeiro e Niterói que tiveram seus pedidos tirados pelo
+-- vendedor João? 
+SELECT c.nome AS nome_cliente
+FROM cliente c
+INNER JOIN pedido p ON c.id = p.idCliente
+INNER JOIN vendedor v ON p.idVendedor = v.id
+WHERE (c.cidade = 'Rio de Janeiro' OR c.cidade = 'Niterói')
+  AND v.nome = 'João';
 
 -- 35. Quais os vendedores ganham um salário fixo abaixo da média? 
 SELECT nome 
