@@ -41,3 +41,26 @@ SELECT f.nome, f.endereco
 FROM funcionarios f
 LEFT JOIN setores s ON f.id = s.nome
 ORDER BY nome ASC;
+
+-- Correção 
+CREATE VIEW funcionarios_view AS
+SELECT f.id AS funcionario_id, f.nome AS funcionario_nome, c.nome AS cidade_nome, s.nome AS setor_nome
+FROM funcionarios f
+JOIN cidades c ON f.codCidade = c.id
+JOIN funcionarios_setores fs ON f.id = fs.codFuncionario
+JOIN setores s ON fs.codSetor = s.id;
+
+SELECT s.nome AS nome_setor, COUNT(fs.codFuncionario) AS quantidade_funcionarios
+FROM setores s
+LEFT JOIN funcionarios_setores fs ON s.id = fs.codSetor
+GROUP BY s.id
+ORDER BY s.nome ASC;
+
+SELECT f.nome AS nome_funcionario, f.endereco AS endereco_funcionario, s.nome AS nome_setor
+FROM funcionarios f
+JOIN funcionarios_setores fs ON f.id = fs.codFuncionario
+JOIN setores s ON fs.codSetor = s.id
+ORDER BY f.nome ASC;
+
+
+
