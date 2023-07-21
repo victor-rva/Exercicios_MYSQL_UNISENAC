@@ -283,6 +283,17 @@ WHERE idProduto = 78;
 
 SELECT * FROM vendedor order by salario;
 
+-- 18) Qual a média dos salários fixos dos vendedores (função AVG())? 
+SELECT AVG(v.salario) AS "Média do salário fixo"
+FROM vendedor v;
+
+-- 19) Quantos vendedores ganham acima de R$ 2.500,00 de salário fixo (função COUNT() com
+-- cláusula WHERE)? 
+SELECT COUNT(v.salario)
+FROM vendedor v
+WHERE v.salario > 2500;
+
+
 -- 20. Quais são as unidades de produtos, diferentes, na tabela produto (cláusula DISTINCT)
 SELECT DISTINCT unidade
 FROM produto;
